@@ -554,10 +554,9 @@ describe('useQueryParams', () => {
     expect(mockSetValue).not.toHaveBeenCalled();
     expect(mockHandleSubmit).not.toHaveBeenCalled();
     expect(mockSubmitMessage).not.toHaveBeenCalled();
+    // No processable params were consumed, so the URL must not be rewritten —
+    // a rewrite would change searchParams and retrigger processing indefinitely
     const mockSetSearchParams = (useSearchParams as jest.Mock).mock.results[0].value[1];
-    const [params, options] = mockSetSearchParams.mock.calls[0];
-    expect(params).toBeInstanceOf(URLSearchParams);
-    expect(params.toString()).toBe('');
-    expect(options).toEqual(expect.objectContaining({ replace: true }));
+    expect(mockSetSearchParams).not.toHaveBeenCalled();
   });
 });

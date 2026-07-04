@@ -27,7 +27,7 @@ const mockUseTitleGeneration = jest.fn(() => {
 });
 
 jest.mock('~/store', () => {
-  const { atom: recoilAtom } = jest.requireActual('recoil');
+  const { atom: recoilAtom, atomFamily: recoilAtomFamily } = jest.requireActual('recoil');
   return {
     __esModule: true,
     default: {
@@ -35,6 +35,10 @@ jest.mock('~/store', () => {
       search: recoilAtom({
         key: 'mock-cs-search',
         default: { query: '', debouncedQuery: '', enabled: false, isTyping: false },
+      }),
+      submissionByIndex: recoilAtomFamily({
+        key: 'mock-cs-submissionByIndex',
+        default: null,
       }),
     },
   };

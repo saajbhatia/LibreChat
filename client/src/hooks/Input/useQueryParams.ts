@@ -54,6 +54,7 @@ export default function useQueryParams({
   const attemptsRef = useRef(0);
   const MAX_SETTINGS_WAIT_MS = 3000;
   const processedRef = useRef(false);
+  const lastSearchRef = useRef<string | null>(null);
   const pendingSubmitRef = useRef(false);
   const settingsAppliedRef = useRef(false);
   const submissionHandledRef = useRef(false);
@@ -242,6 +243,13 @@ export default function useQueryParams({
   }, [methods, submitMessage, setSearchParams, getPreservedSearchParams]);
 
   useEffect(() => {
+    const searchString = searchParams.toString();
+    if (lastSearchRef.current !== searchString) {
+      lastSearchRef.current = searchString;
+      processedRef.current = false;
+      attemptsRef.current = 0;
+    }
+
     const processQueryParams = () => {
       const queryParams: Record<string, string> = {};
       searchParams.forEach((value, key) => {
@@ -281,6 +289,7 @@ export default function useQueryParams({
 
       const { decodedPrompt, validSettings, shouldAutoSubmit } = processQueryParams();
       const hasSettings = Object.keys(validSettings).length > 0;
+      const hasProcessableParams = Boolean(decodedPrompt) || hasSettings || shouldAutoSubmit;
 
       const autoSubmitAllowed = startupConfig.interface?.autoSubmitFromUrl !== false;
       const willAutoSubmit = shouldAutoSubmit && autoSubmitAllowed;
@@ -295,8 +304,9 @@ export default function useQueryParams({
         logger.log('conversation', 'Query parameters processed successfully');
         clearInterval(intervalId);
 
-        // Defer URL cleanup until after submission completes (processSubmission handles it)
-        if (!pendingSubmitRef.current) {
+        // Defer URL cleanup until after submission completes (processSubmission handles it);
+        // skip it entirely when nothing was consumed so the URL rewrite cannot retrigger this effect
+        if (!pendingSubmitRef.current && hasProcessableParams) {
           setSearchParams(getPreservedSearchParams(), { replace: true });
         }
       };

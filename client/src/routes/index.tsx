@@ -51,6 +51,11 @@ const loadProjectWorkspace = () =>
     Component: m.ProjectWorkspace,
   }));
 
+const loadCoursePage = () =>
+  import('~/components/LearnLink').then((m) => ({
+    Component: m.CoursePage,
+  }));
+
 const baseEl = document.querySelector('base');
 const baseHref = baseEl?.getAttribute('href') || '/';
 
@@ -169,6 +174,10 @@ export const router = createBrowserRouter(
             {
               path: 'projects/:projectId',
               lazy: loadProjectWorkspace,
+            },
+            {
+              path: 'courses/:courseId',
+              lazy: loadCoursePage,
             },
             {
               path: 'agents',
