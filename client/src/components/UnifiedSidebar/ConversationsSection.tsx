@@ -15,6 +15,7 @@ import {
 import { useConversationsInfiniteQuery, useTitleGeneration } from '~/data-provider';
 import { Conversations } from '~/components/Conversations';
 import ProjectsSection from '~/components/Conversations/ProjectsSection';
+import CoursesSection from '~/components/Conversations/CoursesSection';
 import FavoritesList from '~/components/Nav/Favorites/FavoritesList';
 import SearchBar from '~/components/Nav/SearchBar';
 import store from '~/store';
@@ -138,6 +139,7 @@ const ConversationsSection = memo(() => {
           showFavorites={false}
         />
       </div>
+      {!search.query && <CoursesSection toggleNav={toggleNav} />}
     </div>
   );
 });
